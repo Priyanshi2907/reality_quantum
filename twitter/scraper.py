@@ -141,7 +141,7 @@ def twitter_search(keyword):
                    "language":"en"}
     
     headers = {
-    	"X-RapidAPI-Key":  '7f38c01ec5msh6d33265667283d1p15a502jsn52ad05aac500',  # Rapid API key
+    	"X-RapidAPI-Key":  'ede002137bmsh8b276e5911da552p104e91jsn05192d4dc026',  # Rapid API key
     	"X-RapidAPI-Host": "twitter154.p.rapidapi.com" 
     }
     
