@@ -1,14 +1,16 @@
 from django.shortcuts import render
 from rest_framework.views import APIView
+from rest_framework.generics import ListAPIView
+
 from rest_framework.response import Response
 from rest_framework import status
 from .models import tweet,influencers
-from .serializers import TweetSerializers,InfluSerializers
+from .serializers import TweetSerializers,InfluSerializers,RetrieveTweetSerializer
 from .scraper import *  # Import your scraping function
 
 
 
-class  SearchTweets(APIView):
+class  PostTweets(APIView):
     def get(self,request):
         related_keywords = [
                 'gurgaon real estate',
@@ -63,6 +65,12 @@ class  SearchTweets(APIView):
         serializer = TweetSerializers(saved_tweets, many=True)
         
         return Response(serializer.data, status=status.HTTP_200_OK)
+class RetrieveTweets(APIView):
+    
+    def get(self,request):
+       tweet_obj= tweet.objects.all()
+       tweet_serializer=RetrieveTweetSerializer(tweet_obj,many=True)
+       return Response(tweet_serializer.data)
     
 # class influencers(APIView):
 #      def get(self,request):

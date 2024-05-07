@@ -10,3 +10,7 @@ class InfluSerializers(serializers.ModelSerializer):
     class Meta:
         model=influencers
         fields='__all__'
+class RetrieveTweetSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = tweet
+        fields = '__all__'
