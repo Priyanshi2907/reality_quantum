@@ -7,7 +7,7 @@ from rest_framework import status
 from .models import tweet,influencers
 from .serializers import TweetSerializers,InfluSerializers,RetrieveTweetSerializer
 from .scraper import *  # Import your scraping function
-
+from .influencer_scraper import *
 
 
 class  PostTweets(APIView):
@@ -67,11 +67,26 @@ class  PostTweets(APIView):
         return Response(serializer.data, status=status.HTTP_200_OK)
 class RetrieveTweets(APIView):
     
+    # def get(self,request):
+    #    tweet_obj= tweet.objects.all()
+    #    tweet_serializer=RetrieveTweetSerializer(tweet_obj,many=True)
+    #    return Response(tweet_serializer.data)
+    def get(self,request,sentiment):
+        tweet_obj_sent=tweet.objects.filter(sentiment=sentiment)
+
+        serializer=RetrieveTweetSerializer(tweet_obj_sent,many=True)
+
+        return Response(serializer.data,status=status.HTTP_200_OK)
+
+
+
+class get_influ(APIView):
     def get(self,request):
-       tweet_obj= tweet.objects.all()
-       tweet_serializer=RetrieveTweetSerializer(tweet_obj,many=True)
-       return Response(tweet_serializer.data)
-    
+        influencers=real_estate_influencers()
+        if influencers is None:
+            return Response("failed to scrap influencers",status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        data={'influencers': influencers}
+        return Response(data)
 # class influencers(APIView):
 #      def get(self,request):
 #         influ_str=real_estate_influencers()

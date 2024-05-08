@@ -14,7 +14,7 @@ class Command(BaseCommand):
         print(now)
 
         # URL path to trigger
-        url_path = '/real_tweets/'
+        url_path = '/post_tweets/'
 
         # Resolve the URL pattern and get the view function
         resolver_match = resolve(url_path)
