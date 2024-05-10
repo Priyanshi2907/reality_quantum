@@ -110,15 +110,15 @@ def NER(text):
     doc = nlp(text)
     entities = []
     for ent in doc.ents:
-        if ent.label_ == "ORG":
-            entities.append("ORG")
-        elif ent.label_ == "PERSON":
-            entities.append("PERSON")
+        if ent.label_.lower()== "org":
+            entities.append("org")
+        elif ent.label_.lower() == "person":
+            entities.append("person")
         
     if entities:
         return entities[0]
     else:
-        return "ALL"
+        return "all"
 
 
 
@@ -129,8 +129,12 @@ def twitter_search(keyword):
     url = "https://twitter154.p.rapidapi.com/search/search"
     
     today = datetime.today()
-    yesterday = today - timedelta(days=28)
+    yesterday = today - timedelta(days=1)
     yesterday = yesterday.strftime('%Y-%m-%d')
+
+    # startdate=datetime(2024, 1, 1).strftime('%Y-%m-%d')
+
+    # enddate=datetime.today().strftime('%Y-%m-%d')
     
     querystring = {"query": keyword,
                    "section":"latest",
@@ -138,16 +142,17 @@ def twitter_search(keyword):
                    "min_likes":"1",
                    "limit":"20",
                    "start_date": yesterday,
+                   #"end_date":enddate,
                    "language":"en"}
     
     headers = {
-    	"X-RapidAPI-Key":  'ede002137bmsh8b276e5911da552p104e91jsn05192d4dc026',  # Rapid API key
+    	"X-RapidAPI-Key":  '713dc17162msh077ff3e2538343fp1cd117jsn843136c5c27d',  # Rapid API key
     	"X-RapidAPI-Host": "twitter154.p.rapidapi.com" 
     }
     
     response = requests.get(url, headers=headers, params=querystring)
     
-    #print(response.json())
+    print(response.json())
       
     try: 
         data_2 = [{
@@ -163,7 +168,11 @@ def twitter_search(keyword):
             "favorite_count": tweet['favorite_count'],
             "lang": tweet['language'],
             "username": tweet['user']['name']
-            } for tweet in response.json()['results']]
+            } for tweet in response.json()['results'] 
+            # if tweet['user']['follower_count']>=1000
+            if  all(tweet.get(key) for key in ['tweet_id', 'text', 'creation_date', 'expanded_url', 'user'])
+            ]
+ 
 
     except:
         data_2 = [{
@@ -178,8 +187,11 @@ def twitter_search(keyword):
             "retweet_count": tweet['retweet_count'],
             "favorite_count": tweet['favorite_count'],
             "lang": tweet['language'],
-            "username": tweet['user']['username'],
-            } for tweet in response.json()['results']]
+            "username": tweet['user']['username']            
+            } for tweet in response.json()['results'] 
+            # if tweet['user']['follower_count']>=1000
+            if all(tweet.get(key) for key in ['tweet_id', 'text', 'creation_date', 'expanded_url', 'user'])
+            ]
 
     df = pd.DataFrame(data_2)
 
@@ -225,20 +237,21 @@ def twitter_search(keyword):
 #     twitter_search returns dataframe df and dictionary which contains the count of hashtags
 
 # main_df = pd.DataFrame()
+def main():
 
-# for related_keyword in related_keywords:
+    for related_keyword in related_keywords:
 
-#     print(related_keyword)
-
-#     df = twitter_search(related_keyword)
-#     influencers=real_estate_influencers()
-#     #print (df)
-#     print("influencers : ",influencers)
+        print(related_keyword)
     
-#     if not df.empty:
+        df = twitter_search(related_keyword)
+        influencers=real_estate_influencers()
+        #print (df)
+        #print("influencers : ",influencers)
         
-#         main_df = pd.concat([main_df, df], axis=0)
-        
-# main_df.reset_index(drop=True, inplace=True)      
-
-# main_df
+    #     if not df.empty:
+            
+    #         main_df = pd.concat([main_df, df], axis=0)
+            
+    # main_df.reset_index(drop=True, inplace=True)      
+    # main_df
+main()
